@@ -1,6 +1,7 @@
 import record
 import time
 import totext
+import awsiot
 import RPi.GPIO as gpio
 
 BUTTONPIN = 12
@@ -23,12 +24,18 @@ def wait_until_push_button():
 if __name__ == '__main__':
     while True:
         rec = record.Recorder(device=MICDEVICE, nChannel=1, framerate=44100, nFramePerBuffer=4096)
+
         wait_until_push_button()
-        print("PUSHED")
         rec.start()
+
         wait_until_release_button()
-        print("RELEASED")
         rec.end()
+        timestamp = time.time()
         audio = rec.close()
         text = totext.main(audio, framerate=44100)
+
         print(text)
+        awsiot.mqtt.publish("bookmark_memo", json.dumps({
+            "timestamp": timestamp(),
+            "content": text
+        }), 1)
