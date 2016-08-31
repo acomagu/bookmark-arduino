@@ -16,7 +16,7 @@ class Recorder:
     def start(self):
         def _frame(in_data, frame_count, time_info, status):
             self.s.write(in_data)
-            return (None, self.pyaudio.paContinue)
+            return (None, pyaudio.paContinue)
 
         self.stream = self.p.open(
             format=pyaudio.paInt16,
