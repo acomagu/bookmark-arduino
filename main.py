@@ -1,4 +1,5 @@
 import record
+import time
 import totext
 import RPi.GPIO as gpio
 
@@ -12,11 +13,11 @@ def is_button_pressed():
 
 def wait_until_release_button():
     while is_button_pressed():
-        pass
+        time.sleep(0.016)
 
 def wait_until_push_button():
     while not is_button_pressed():
-        pass
+        time.sleep(0.016)
 
 if __name__ == '__main__':
     while True:
