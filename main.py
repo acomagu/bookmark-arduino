@@ -22,7 +22,7 @@ def wait_until_push_button():
 
 if __name__ == '__main__':
     while True:
-        rec = record.Recorder(device=MICDEVICE, nChannel=1, framerate=44100, nframePerBuffer=4096)
+        rec = record.Recorder(device=MICDEVICE, nChannel=1, framerate=44100, nFramePerBuffer=4096)
         wait_until_push_button()
         print("PUSHED")
         rec.start()
