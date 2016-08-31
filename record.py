@@ -4,48 +4,37 @@ import io
 import numpy
 import threading
 
-def recordSync(device, length, nChannel, framerate, framesPerBuffer):
-    def callback(s):
-        nonlocal audio
-        audio = s
-        e.set()
-    audio = None
-    e = threading.Event()
-    record(device, length, nChannel, framerate, framesPerBuffer, callback=callback)
-    e.wait()
-    return audio
+class Recorder:
+    def __init__(self, device, nChannel, framerate, nFramePerBuffer):
+        self.s = io.BytesIO()
+        self.p = pyaudio.PyAudio()
+        self.device = device
+        self.nChannel = nChannel
+        self.framerate = framerate
+        self.nFramePerBuffer = nFramePerBuffer
 
-def record(device, length, nChannel, framerate, framesPerBuffer, callback):
-    def frame(in_data, frame_count, time_info, status):
-        s.write(in_data)
-        return (None, pyaudio.paContinue)
+    def start(self):
+        def _frame(in_data, frame_count, time_info, status):
+            self.s.write(in_data)
+            return (None, self.pyaudio.paContinue)
 
-    def finish_record():
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-        s.flush()
-        s.seek(0)
-        callback(s)
+        self.stream = p.open(
+            format=pyaudio.paInt16,
+            channels=self.nChannel,
+            rate=self.framerate,
+            input_device_index=self.device,
+            input=True,
+            output=False,
+            frames_per_buffer=self.framesPerBuffer,
+            stream_callback=_frame
+        )
 
-    s = io.BytesIO()
-    p = pyaudio.PyAudio()
-    stream = p.open(
-        format=pyaudio.paInt16,
-        channels=nChannel,
-        rate=framerate,
-        input_device_index=device,
-        input=True,
-        output=False,
-        frames_per_buffer=framesPerBuffer,
-        stream_callback=frame
-    )
+    def end(self):
+        self.stream.stop_stream()
 
-    threading.Timer(length, finish_record).start()
-
-if __name__ == '__main__':
-    s = record(2, 5)
-    f = open('test.wav', 'wb')
-    f.write(s.getvalue())
-    f.close()
-    s.close()
+    def close(self):
+        self.stream.close()
+        self.p.terminate()
+        self.s.flush()
+        self.s.seek(0)
+        return self.s
