@@ -1,4 +1,5 @@
 import record
+import json
 import time
 import totext
 import awsiot
@@ -36,6 +37,6 @@ if __name__ == '__main__':
 
         print(text)
         awsiot.mqtt.publish("bookmark_memo", json.dumps({
-            "timestamp": timestamp(),
+            "timestamp": timestamp,
             "content": text
         }), 1)
