@@ -18,7 +18,7 @@ class Recorder:
             self.s.write(in_data)
             return (None, self.pyaudio.paContinue)
 
-        self.stream = p.open(
+        self.stream = self.p.open(
             format=pyaudio.paInt16,
             channels=self.nChannel,
             rate=self.framerate,
