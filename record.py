@@ -25,7 +25,7 @@ class Recorder:
             input_device_index=self.device,
             input=True,
             output=False,
-            frames_per_buffer=self.framesPerBuffer,
+            frames_per_buffer=self.nFramePerBuffer,
             stream_callback=_frame
         )
 
