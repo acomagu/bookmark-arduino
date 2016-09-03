@@ -1,4 +1,6 @@
 import record
+import re
+import festival
 import json
 import time
 import totext
@@ -40,3 +42,6 @@ if __name__ == '__main__':
             "timestamp": timestamp,
             "content": text
         }), 1)
+        if re.compile(r'^[sS]earch .*$').match(text):
+            print(text)
+            festival.sayText(text)
