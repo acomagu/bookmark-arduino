@@ -38,10 +38,13 @@ if __name__ == '__main__':
         text = totext.main(audio, framerate=44100)
 
         print(text)
-        awsiot.mqtt.publish("bookmark_memo", json.dumps({
-            "timestamp": timestamp,
-            "content": text
-        }), 1)
-        if re.compile(r'^[sS]earch .*$').match(text):
-            print(text)
-            festival.sayText(text)
+        if text:
+            awsiot.mqtt.publish("bookmark_memo", json.dumps({
+                "timestamp": timestamp,
+                "content": text
+            }), 1)
+            if re.compile(r'^[sS]earch .*$').match(text):
+                print(text)
+                festival.sayText(text)
+        else:
+            festival.sayText("Sorry?")
